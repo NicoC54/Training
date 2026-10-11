@@ -1,38 +1,46 @@
-# Les Fondamentaux du GNC pour la Robotique Mobile
+Le passage de la 2D à la 3D ajoute trois degrés de liberté : le mouvement sur l'axe Z (l'altitude) et deux axes de rotation supplémentaires. Le vecteur d'état (la pose) passe de 3 variables $(x, y, \theta)$ à 6 variables $(x, y, z, \phi, \theta, \psi)$.
 
-Ce document résume les concepts mathématiques et physiques de base essentiels pour un ingénieur GNC (Guidance, Navigation, and Control) junior, en se concentrant sur la robotique mobile terrestre (2D).
+## Les 3 Matrices de Rotation Fondamentales (Matrices d'Euler)
 
----
+En 3D, une rotation globale est la combinaison de trois rotations élémentaires autour des axes du repère local. Chaque axe correspond à un angle d'attitude spécifique.
 
-## 1. Repères Spatiaux et Matrices de Transformation
+**1. Roulis (Roll - $\phi$) : Rotation autour de l'axe X**
+S'incliner sur le côté gauche ou droit. L'axe X reste fixe.
 
-En robotique mobile, le problème de la localisation se simplifie généralement à un environnement en deux dimensions (2D). Il est crucial de maîtriser le passage entre le repère local du robot et le repère global de la carte.
 
-### Les deux repères principaux
-*   **Le repère Global (World - $W$) :** Il s'agit du repère fixe de la carte. Son origine $(0,0)$ est arbitraire (souvent le point de départ du robot).
-*   **Le repère Local (Robot - $R$) :** Ce repère est mobile, attaché au centre du robot. Par convention, l'axe X pointe toujours vers "l'avant" du robot, et l'axe Y vers sa gauche.
+$$R_x(\phi) = \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos(\phi) & -\sin(\phi) \\ 0 & \sin(\phi) & \cos(\phi) \end{bmatrix}$$
 
-### Le vecteur d'état (La Pose)
-À tout instant, la position et l'orientation du robot dans le repère global sont définies par son vecteur d'état, appelé sa "pose" :
+**2. Tangage (Pitch - $\theta$) : Rotation autour de l'axe Y**
+Piquer du nez ou se cabrer. L'axe Y reste fixe.
 
-$$P_W = \begin{bmatrix} x \\ y \\ \theta \end{bmatrix}$$
 
-Où :
-*   $x$ et $y$ représentent les coordonnées cartésiennes.
-*   $\theta$ (thêta) est le cap (yaw), c'est-à-dire l'angle entre l'axe X du monde global et l'axe X du robot.
+$$R_y(\theta) = \begin{bmatrix} \cos(\theta) & 0 & \sin(\theta) \\ 0 & 1 & 0 \\ -\sin(\theta) & 0 & \cos(\theta) \end{bmatrix}$$
 
-### Le changement de repère (Transformation Homogène)
-Pour traduire les coordonnées d'un point (par exemple, un obstacle détecté par un capteur) du repère local du robot vers le repère global du monde, on utilise une matrice de transformation homogène. Cette matrice combine la **rotation** (alignement des axes) et la **translation** (déplacement de l'origine).
+**3. Lacet (Yaw - $\psi$) : Rotation autour de l'axe Z**
+Tourner sur soi-même comme une toupie (c'est la matrice utilisée en 2D). L'axe Z reste fixe.
 
-Soit un point $P_R$ détecté dans le repère du robot. Sa position dans le monde global $P_W$ est calculée par :
 
-$$P_W = T_W^R \cdot P_R$$
+$$R_z(\psi) = \begin{bmatrix} \cos(\psi) & -\sin(\psi) & 0 \\ \sin(\psi) & \cos(\psi) & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
 
-Sous forme matricielle, en utilisant les coordonnées homogènes (ajout d'un `1` à la fin des vecteurs pour permettre la translation par multiplication), cela s'écrit :
+**La matrice de rotation 3D complète ($R$)** s'obtient en multipliant ces trois matrices. L'ordre de multiplication est crucial car les rotations en 3D ne sont pas commutatives. En robotique et aéronautique, la convention standard est souvent Z-Y-X (Lacet, puis Tangage, puis Roulis) :
 
-$$ \begin{bmatrix} x_{monde} \\ y_{monde} \\ 1 \end{bmatrix} = \begin{bmatrix} \cos(\theta) & -\sin(\theta) & x_{robot} \\ \sin(\theta) & \cos(\theta) & y_{robot} \\ 0 & 0 & 1 \end{bmatrix} \cdot \begin{bmatrix} x_{point\_local} \\ y_{point\_local} \\ 1 \end{bmatrix} $$
 
----
+$$R = R_z(\psi) \cdot R_y(\theta) \cdot R_x(\phi)$$
+
+## Transformation Homogène d'un Point 3D
+
+Pour transformer un point détecté par un capteur du repère local ($P_R$) vers le repère global de la carte ($P_W$), la matrice de transformation homogène passe d'une taille 3x3 à une taille 4x4.
+
+Elle encapsule la matrice de rotation complète $R$ (taille 3x3) et le vecteur de translation de l'origine du robot $[X_{robot}, Y_{robot}, Z_{robot}]^T$.
+
+L'équation globale s'écrit :
+
+
+$$\begin{bmatrix} x_{monde} \\ y_{monde} \\ z_{monde} \\ 1 \end{bmatrix} = \begin{bmatrix} R_{11} & R_{12} & R_{13} & X_{robot} \\ R_{21} & R_{22} & R_{23} & Y_{robot} \\ R_{31} & R_{32} & R_{33} & Z_{robot} \\ 0 & 0 & 0 & 1 \end{bmatrix} \cdot \begin{bmatrix} x_{local} \\ y_{local} \\ z_{local} \\ 1 \end{bmatrix}$$
+
+Où les coefficients $R_{ij}$ sont les éléments résultants de la matrice de rotation combinée $R$.
+
+Bien que les matrices d'Euler soient très visuelles pour comprendre la géométrie, elles souffrent d'une faille mathématique majeure appelée "blocage de cardan" (Gimbal Lock) : lorsque le tangage atteint exactement 90°, les axes de roulis et de lacet s'alignent, faisant perdre un degré de liberté au système. Pour contourner ce problème, les systèmes GNC modernes évitent les matrices de rotation au profit d'outils mathématiques plus robustes.
 
 ## 2. Cinématique Simple : Différentiel et Bicyclette
 
