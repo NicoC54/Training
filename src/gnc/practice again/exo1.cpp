@@ -52,6 +52,9 @@
 
     public:
 
+
+        CircularBuffer() = default;
+
     //par copie
     void push (const T& element){
 
