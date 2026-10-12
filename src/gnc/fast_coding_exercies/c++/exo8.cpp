@@ -136,7 +136,7 @@ class SensorManager{
     public:
         SensorManager() = default;
 
-    void add_sensor(std::unique_ptr<ISensor> sensor_ptr){
+    void add_sensor(std::unique_ptr<ISensor> sensor_ptr) {
         sensors.push_back(std::move(sensor_ptr));
     }
 

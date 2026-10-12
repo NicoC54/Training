@@ -2,18 +2,19 @@
 
 
 def filtre_et_inverse(liste):
+    return [word[::-1] for word in liste if len(word)>=5]
 
-    words = liste.size()
 
-    for word in liste:
 
-        if (len(word)<5) :
-            break
+def twosum(liste, target):
 
-        else:
-            liste2=[]
-            liste2.append(word[::-1])
-    
-    return liste2
+    vu = {}
 
+    for index,number in enumerate(liste):
+        complement = target - number
+
+        if complement in vu.keys()
+            return (vu[complement],index)
+        
+        vu[number] = index
         
