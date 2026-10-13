@@ -3,10 +3,22 @@
 
 void nettoyer_telemetrie(std::vector<int>& paquets) {
 
-    
+    std::vector<int> paquets_ranges;
 
-   
+    for (int value : paquets){
+        if (value !=0){
+            paquets_ranges.push_back(value);
+        }
+    }
 
+    int length = paquets_ranges.size();
+    int diff_size = paquets.size() - length;
+
+    for (int i = 0; i < diff_size; i++){
+        paquets_ranges.push_back(0);
+    }
+
+    paquets = paquets_ranges;
 }
 
 // --- BLOC DE TESTS (Fonction utilitaire pour l'affichage) ---
