@@ -44,11 +44,12 @@ Paste your code AND the terminal output in the chat, with the time taken.
 
 def moving_average(signal, w):
 
+    if w <= 0:
+             raise ValueError("w must be positive")
+
     if len(signal) < w:
         return []
 
-    if w < 0:
-         raise ValueError("w must be positive")
 
     means = []
 
@@ -117,6 +118,9 @@ if __name__ == "__main__":
     result = moving_average([1,2,3,4],2)
     expected = [1.5,2.5,3.5]
     assert len(result)==len(expected)
+    assert all(math.isclose(a, b) for a, b in zip(result, expected)), result
+
+    
 
     assert moving_average([1,2],3) == []
     assert moving_average([],1) == []
@@ -139,4 +143,7 @@ if __name__ == "__main__":
     assert detect_spikes([2, 2, 2, 2, 2], 2, 0.5) == []    # flat signal: no spike
 
     print("all tests pass")
+
+    #comments : on est en complexité O(n) optimale (somme glissante), car 10 et 10 font partie de la nouvelle moyenne mobile : donc lecart entre la moyenen mobile et la valeur normale est enorme.
+    #rajouter une condition : si la mesure est aberrante lignorer dans le calcul de moyenne
 
