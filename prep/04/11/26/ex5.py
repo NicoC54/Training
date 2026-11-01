@@ -72,10 +72,42 @@ def kalman_1d(zs, x0, p0, q, r):
     
 
 def kalman_cv(zs, dt, q, r):
-    # TODO
-    pass
+
+    X = np.array([[0],[0]])
+
+    F = np.array([[1,dt],[0,1]])
+
+    H = np.array([[1,0]])
+
+    P = np.array([[1e4,0],[0,1e4]])
+
+    Q = q * np.eye(2)
+
+    R = r 
+
+    I = np.eye(2)
 
 
-if __name__ == "__main__":
-    # TODO: your tests
-    pass
+
+
+    for z in zs:
+
+        #prediction
+
+        X = F@X
+        P = F@P@F.T + Q
+
+        #update
+        S = (H@P@H.T + R)
+        S_inv = np.linalg.inv(S)
+        K = P@H.T@S_inv
+
+        X = X + K@(z- H@X)
+        P = (I-K@H)@P
+
+    return (X[0,0],X[1,0])
+
+        
+    
+
+
