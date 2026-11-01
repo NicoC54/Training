@@ -140,7 +140,7 @@ class Astar{
 
             rclcpp::Service<package_name::srv::GetPath>::SharedPtr service_;
 
-            callbackService(std::shared_ptr<package_name::srv::Request> request, std::shared_ptr<package_name::srv::Response> response){
+            void callbackService(std::shared_ptr<package_name::srv::Request> request, std::shared_ptr<package_name::srv::Response> response){
             int nb_cols = request-> width;
             int nb_lines = request-> height;
             std::vector<int> grid = request-> grid;

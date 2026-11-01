@@ -1,0 +1,60 @@
+#include <iostream>
+#include <array>
+#include <stdexcept>
+
+// La capacité (Capacity) devient un paramètre du template
+template <typename T, size_t Capacity>
+class CircularBuffer {
+public:
+    // Le constructeur n'a plus besoin de prendre la capacité en paramètre
+    CircularBuffer() = default;
+
+    void add(const T& item){
+        m_array[m_head] = item;
+        advance_head();
+    }
+
+    T pop(){
+        if (empty()){
+            throw std::runtime_error("Buffer is empty");
+        }
+        T item = m_array[m_tail]; 
+        m_size--;
+        m_tail = (m_tail + 1) % Capacity;
+        return item;
+    }
+
+    bool empty() const {
+        return m_size == 0;
+    }
+
+    bool full() const {
+        return m_size == Capacity;
+    }
+
+private:
+    std::array<T, Capacity> m_array; 
+    
+    int m_tail = 0;
+    int m_head = 0;
+    int m_size = 0;
+
+    void advance_head(){
+        m_head = (m_head + 1) % Capacity;
+
+        if (m_size == Capacity){
+            m_tail = (m_tail + 1) % Capacity;
+        } else {
+            m_size++;
+        }
+    }
+};
+
+int main() {
+   
+    CircularBuffer<int, 5> cb; 
+    
+    cb.add(10);
+    
+    return 0;
+}

@@ -19,16 +19,6 @@ def max_requests(timestamps, window_size):
 
     return max_request
 
-      
-    
-        
-
-
-
-
-
-    
-
 # Tests locaux
 print(max_requests([1, 5, 5, 8, 12, 13, 14, 15], 5)) # Attendu : 4
 print(max_requests([], 5))                           # Attendu : 0
