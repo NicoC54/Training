@@ -1,32 +1,47 @@
 def flight_phases(log, v_thr):
+
     if len(log) < 2:
         return []
 
+
     segments = []
+
     current_phase = None
-    start_time = None
-    end_time = None
+    start_timestamp = None
+    end_timestamp = None
 
-    for i in range(1, len(log)):
-        t1, alt1 = log[i - 1]
-        t2, alt2 = log[i]
-        vz = (alt2 - alt1) / (t2 - t1)
+    for i in range(1,len(log)):
 
-        if vz > v_thr:
+        t1,z1 = log[i-1]
+        t2,z2 = log[i]
+
+        delta_time = t2 - t1
+        delta_pos = z2 - z1
+        speed_vz = delta_pos / delta_time
+
+        if speed_vz > v_thr:
             phase = "climb"
-        elif vz < -v_thr:
-            phase = "descent"
+
+        elif speed_vz < -v_thr:
+            phase = "descending"
+
         else:
             phase = "hover"
 
-        if phase == current_phase:
-            end_time = t2                                               # same phase: extend
+        if (phase == current_phase):
+            end_timestamp = t2
+
         else:
             if current_phase is not None:
-                segments.append((current_phase, start_time, end_time))  # close the OLD one
-            current_phase = phase                                       # open the new one
-            start_time = t1
-            end_time = t2
+                segments.append((current_phase, start_timestamp, end_timestamp))
+            start_timestamp = t1
+            end_timestamp = t2
+            current_phase = phase
 
-    segments.append((current_phase, start_time, end_time))              # ALWAYS close the last one
+    segments.append((current_phase, start_timestamp, end_timestamp))
+
+        
+
+
+   
     return segments
