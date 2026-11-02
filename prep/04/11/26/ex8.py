@@ -79,10 +79,6 @@ class Track:
     def update(self, t, x, y):
         if self.measurement and t <= self.measurement[-1][0]:
             return False
-
-        last_time = self.measurement[-1][0]
-        if last_time > t:
-            return False
         else:
             self.measurement.append((t,x,y))
             return True
