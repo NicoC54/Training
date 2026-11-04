@@ -46,13 +46,57 @@ Constraints
 
 
 def interpolate(samples, t):
-    # TODO
-    pass
+
+    if not samples or t < samples[0][0] or t > samples[-1][0]:
+                return None
+
+    if len(samples)==1:
+                return samples[0][1]
+
+    for i in range(1, len(samples)):
+
+        
+
+        if samples[i][0] == t:
+            return samples[i][1]
+
+        
+
+        elif samples[i][0] > t:
+            last_mes = samples[i-1][1]
+            pente = (samples[i][1] - samples[i-1][1]) /(samples[i][0]-samples[i-1][0])
+            delta = t - samples[i-1][0]
+            interpolated = last_mes + pente * delta
+            return interpolated
 
 
 def align(a, b, latency_b=0.0):
-    # TODO
-    pass
+    b_corrected = []
+    for sample in b:
+        correct_time = sample[0] - latency_b
+        correct_value = sample[1]
+        b_corrected.append((correct_time,correct_value))
+
+    result = []
+
+    for i in range(len(a)):
+        time_a = a[i][0]
+        value_a = a[i][1]
+     
+
+        value_b = interpolate(b_corrected, time_a)
+        if value_b is not None:
+            result.append((time_a, value_a, value_b))
+
+    return result
+
+       
+       
+        
+
+
+    
+
 
 
 if __name__ == "__main__":
