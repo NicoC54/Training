@@ -112,13 +112,6 @@ def shortest_path_length(grid, start, goal):
               
 
 
-
-         
-         
-
-    
-
-
 def shortest_path(grid, start, goal):
 
     max_cols = len(grid[0])
@@ -157,10 +150,11 @@ def shortest_path(grid, start, goal):
 
          if actual_node == goal:
             path = []
-            parent = actual_node                 # we start from the goal itself
+            parent = parents[actual_node]
+            path.append(parent)
             while parent != None:
-                path.append(parent)              # 1. add the current cell
-                parent = parents[parent]         # 2. then move up to its parent
+                parent = parents[parent]
+                path.append(parent)
             correct_path = path[::-1]
             return correct_path
 
