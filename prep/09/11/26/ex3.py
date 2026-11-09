@@ -56,46 +56,49 @@ def num_islands(grid):
     number_cols = len(grid[0])
     number_islands = 0
 
-    previous_node_value = 0
-
+ 
     queue = deque()
 
-    queue.append((0,0))
+    for i in range(number_lines):
+        for j in range(number_cols):
 
-    while len(queue)!=0:
+            if grid[i][j]=="1" and (i,j) not in visited:
+                queue.append((i,j))
+                number_islands +=1
 
-        current_line,current_col = queue.popleft()
+                while len(queue)!=0:
+                
+                    current_line,current_col = queue.popleft()
 
-        current_node_value = grid[current_line][current_col] 
-
-        if previous_node_value == 0 and current_node_value == 1:
-            number_islands+=1
-
-
-        if current_line > 0 and (current_line-1, current_col) not in visited :
-            queue.append((current_line-1, current_col))
-            visited.add((current_line-1, current_col))
-            previous_node_value = current_node_value
-        
-        if current_line < number_lines-1 and (current_line+1, current_col) not in visited:
-            queue.append((current_line+1, current_col))
-            visited.add((current_line+1, current_col))
-            previous_node_value = current_node_value
-
-
-        if current_col > 0 and (current_line, current_col-1) not in visited :
-            queue.append((current_line, current_col-1))
-            visited.add((current_line, current_col-1))
-            previous_node_value = current_node_value
-
-        if current_col < number_cols-1 and (current_line, current_col+1) not in visited :
-            queue.append((current_line, current_col+1))
-            visited.add((current_line, current_col+1))
-            previous_node_value = current_node_value
-
-
+                    if current_line > 0 and (current_line-1, current_col) not in visited and grid[current_line-1][current_col]=="1":
+                        queue.append((current_line-1, current_col))
+                        visited.add((current_line-1, current_col))
+                        
+                    if current_line < number_lines-1 and (current_line+1, current_col) not in visited and grid[current_line+1][current_col]=="1":
+                        queue.append((current_line+1, current_col))
+                        visited.add((current_line+1, current_col))
+                        
+            
+            
+                    if current_col > 0 and (current_line, current_col-1) not in visited and grid[current_line][current_col-1]=="1":
+                        queue.append((current_line, current_col-1))
+                        visited.add((current_line, current_col-1))
+                        
+            
+                    if current_col < number_cols-1 and (current_line, current_col+1) not in visited and grid[current_line][current_col+1]=="1" :
+                        queue.append((current_line, current_col+1))
+                        visited.add((current_line, current_col+1))
+            
+                
     return number_islands
-        
+                        
+
+
+
+
+    
+
+   
 
        
 
