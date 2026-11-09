@@ -51,14 +51,26 @@ def search(nums, target):
     while (left <= right):
         mid =(left+right)//2
 
-        if nums[mid] ==target:
-            return mid
-        
-        elif nums[mid] > target:
-            right = mid +-1
+        if nums[mid] == target:    # ← LA ligne que tu as perdue
+          return mid
 
-        elif nums[mid] < target:
-            left = mid + 1
+        if nums[left] <= nums[mid]:   #range trié pivot a droite
+          if nums[left] <= target <= nums[mid]:  # target a litnerieur : bingo
+            right = mid-1
+
+          else: 
+              left = mid+1
+
+        else: #range pas trié le pivot est a linterieur 
+            if nums[mid] <= target <= nums[right]: # DEUX bornes aussi
+              left = mid+1
+
+            else:
+              right = mid-1
+            
+              
+
+
 
     return -1
 
